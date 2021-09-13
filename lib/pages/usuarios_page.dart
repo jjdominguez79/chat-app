@@ -1,4 +1,6 @@
+import 'package:chatapp/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -14,23 +16,30 @@ class _UsuariosPageState extends State<UsuariosPage> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   final List<Usuario> usuarios = [
-    Usuario(uid: '1', nombre: 'Lucas', email: 'test1@test.com', onLine: true),
-    Usuario(uid: '2', nombre: 'Juanjo', email: 'test2@test.com', onLine: true),
-    Usuario(uid: '3', nombre: 'Mario', email: 'test3@test.com', onLine: false)
+    Usuario(uid: '1', nombre: 'Lucas', email: 'test1@test.com', online: true),
+    Usuario(uid: '2', nombre: 'Juanjo', email: 'test2@test.com', online: true),
+    Usuario(uid: '3', nombre: 'Mario', email: 'test3@test.com', online: false)
   ];
 
   @override
   Widget build(BuildContext context) {
+
+    final authService = Provider.of<AuthService>(context);
+    final usuario = authService.usuario;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         elevation: 1.0,
-        title: Text('Mi Nombre',style: TextStyle(color: Colors.black54)),
+        title: Text( usuario.nombre, style: TextStyle(color: Colors.black54)),
         backgroundColor: Colors.white,
         leading: IconButton(
           color: Colors.black54,
           icon: Icon(Icons.exit_to_app),
-          onPressed:() {},
+          onPressed:() {
+            Navigator.pushReplacementNamed(context, 'login');
+            AuthService.deleteToken();
+          },
         ),
         actions: [
           Container(
@@ -74,7 +83,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
           width: 10.0,
           height: 10.0,
           decoration: BoxDecoration(
-            color: usuario.onLine ? Colors.green[300] : Colors.red,
+            color: usuario.online ? Colors.green[300] : Colors.red,
             borderRadius: BorderRadius.circular(100)
           ),
         ),
